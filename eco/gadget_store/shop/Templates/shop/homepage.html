@@ -1,0 +1,84 @@
+
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Welcome to NexGadget{% endblock %}
+
+{% block content %}
+<!-- Carousel Section -->
+
+<div id="gadgetCarousel" class="carousel carousel-fade mb-5" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        {% for slide in carousel_slides %}
+            <button type="button" data-bs-target="#gadgetCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                    {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                    aria-label="Slide {{ forloop.counter }}"></button>
+        {% endfor %}
+    </div>
+    <div class="carousel-inner">
+        {% for slide in carousel_slides %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ slide.image.url }}" class="d-block w-100" alt="{{ slide.title }}">
+                <div class="carousel-caption text-start">
+                    
+                    <h3>{{ slide.title }}</h3>
+                    <p>{{ slide.description }}</p>
+                </div>
+            </div>
+        {% empty %}
+            
+            <div class="carousel-item active">
+                <img src="https://via.placeholder.com/1200x450/cccccc/333333?text=Add+Carousel+Slides+in+Admin" class="d-block w-100" alt="No Slides">
+                <div class="carousel-caption text-start">
+                    <h3>Welcome to NexGadget!</h3>
+                    <p>No active carousel slides yet. Please add them in the admin panel.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#gadgetCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#gadgetCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<!-- End Carousel Section -->
+
+
+<h2 class="text-center mb-4">All Gadgets</h2>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for product in products %}
+        <div class="col">
+            <div class="card product-card h-100">
+                <a href="{% url 'product_detail' product.id %}" class="text-decoration-none">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="No Image Available">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="price">₱{{ product.price }}</p>
+                        {% if product.stock_quantity > 0 %}
+                            <p class="stock-available">Available: {{ product.stock_quantity }} units</p>
+                        {% else %}
+                            <p class="stock-out">Out of Stock</p>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="card-footer bg-white border-top-0">
+                    
+                    <a href="{% url 'cart_add' product.id %}" class="btn btn-outline-primary w-100">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center">
+            <p>No products available at the moment. Please check back later!</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

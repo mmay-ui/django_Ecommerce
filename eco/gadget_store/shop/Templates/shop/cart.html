@@ -1,0 +1,106 @@
+<!-- shop/templates/shop/cart.html -->
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Your Shopping Cart</h2>
+
+    {% if not cart_items %}
+        <div class="alert alert-info text-center" role="alert">
+            Your shopping cart is empty. <a href="{% url 'product_list' %}" class="alert-link">Start shopping now!</a>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Items in Cart</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Subtotal</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'product_detail' item.product.id %}" class="text-decoration-none text-dark">
+                                                {% if item.product.image %}
+                                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="50" height="50" class="me-2">
+                                                {% else %}
+                                                    <img src="https://via.placeholder.com/50x50?text=No+Image" alt="No Image" width="50" height="50" class="me-2">
+                                                {% endif %}
+                                                {{ item.product.name }}
+                                            </a>
+                                        </td>
+                                        <td>₱{{ item.product.price }}</td>
+                                        <td>
+                                            <form action="{% url 'cart_update' item.product.id %}" method="post" class="d-inline-flex align-items-center">
+                                                {% csrf_token %}
+                                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock_quantity }}" class="form-control form-control-sm me-2" style="width: 70px;">
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
+                                            </form>
+                                            {% if not item.available %}
+                                                <span class="badge bg-warning text-dark ms-2">Limited Stock</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>₱{{ item.subtotal }}</td>
+                                        <td>
+                                            <a href="{% url 'cart_remove' item.product.id %}" class="btn btn-sm btn-outline-danger">Remove</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {% if not all_items_valid %}
+                            <div class="alert alert-warning mt-3" role="alert">
+                                Some items in your cart have been adjusted due to stock limitations. Please review your cart.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Summary</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <strong>₱{{ total_price }}</strong>
+                            </li>
+                            <!-- Add Shipping Cost here if applicable -->
+                            <!-- <li class="list-group-item d-flex justify-content-between">
+                                <span>Shipping:</span>
+                                <strong>$X.XX</strong>
+                            </li> -->
+                            <li class="list-group-item d-flex justify-content-between fw-bold">
+                                <span>Total:</span>
+                                <strong>₱{{ total_price }}</strong>
+                            </li>
+                        </ul>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg">Proceed to Checkout</a>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <a href="{% url 'product_list' %}" class="text-decoration-none">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

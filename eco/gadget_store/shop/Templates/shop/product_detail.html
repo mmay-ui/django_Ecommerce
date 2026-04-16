@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Gadget Store</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 800px; margin: auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .product-detail { text-align: center; }
+        .product-detail img { max-width: 300px; height: auto; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .product-detail h1 { color: #333; margin-bottom: 10px; }
+        .product-detail .price { font-weight: bold; color: #007bff; font-size: 1.5em; margin-bottom: 15px; }
+        .product-detail .description { color: #555; line-height: 1.6; margin-bottom: 20px; text-align: left; }
+        .product-detail .stock { font-size: 1.1em; margin-bottom: 20px; }
+        .product-detail .available { color: #28a745; font-weight: bold; }
+        .product-detail .out-of-stock { color: #dc3545; font-weight: bold; }
+        .back-link { display: block; margin-top: 20px; color: #007bff; text-decoration: underline; }
+        .add-to-cart-button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .add-to-cart-button:hover {
+            background-color: #218838;
+        }
+        .add-to-cart-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="product-detail">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No Image Available">
+            {% endif %}
+            <h1>{{ product.name }}</h1>
+            <p class="price">₱{{ product.price }}</p>
+            <p class="description">{{ product.description }}</p>
+
+            {% if product.stock_quantity > 0 %}
+                <p class="stock available">Available: {{ product.stock_quantity }} units</p>
+                
+                
+                <form action="{% url 'cart_add' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="add-to-cart-button">Add to Cart</button>
+                </form>
+                
+            {% else %}
+                <p class="stock out-of-stock">Out of Stock</p>
+            {% endif %}
+            <a href="{% url 'product_list' %}" class="back-link">Back to Product List</a>
+        </div>
+    </div>
+</body>
+</html>

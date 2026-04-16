@@ -1,0 +1,70 @@
+<!-- shop/templates/shop/cart_detail.html -->
+{% extends 'shop/base.html' %}
+
+{% block title %}Your Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">Your Shopping Cart</h2>
+
+    
+
+    
+    {% if cart_items %} 
+        <div class="row">
+            <div class="col-md-8">
+                <div class="list-group">
+                    
+                    {% for item in cart_items %} 
+                        <div class="list-group-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                            <div class="d-flex align-items-center">
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 20px; border-radius: 5px;">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/80?text=No+Image" alt="No Image" style="width: 80px; height: 80px; object-fit: cover; margin-right: 20px; border-radius: 5px;">
+                                {% endif %}
+                                <div>
+                                    <h5 class="mb-1">{{ item.product.name }}</h5>
+                                    
+                                    <p class="mb-0 text-muted">₱{{ item.price|floatformat:2 }} x {{ item.quantity }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="me-3 fw-bold"> ₱{{ item.total_price|floatformat:2 }}</span>
+                                
+                                <a href="{% url 'cart_remove' item.product.id %}" class="btn btn-sm btn-outline-danger">Remove</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Summary</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Total Items:</span>
+                                
+                                <strong>{{ cart.total_items }}</strong> 
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                
+                                <strong>₱{{ cart.get_total_price|floatformat:2 }}</strong>
+                            </li>
+                        </ul>
+                        <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg w-100 mt-3">Proceed to Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        
+        <div class="text-center mt-5">
+            <p>Your shopping cart is empty.</p>
+            <a href="{% url 'product_list' %}" class="btn btn-primary">Continue Shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

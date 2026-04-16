@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your GadgetHub Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .header h1 {
+            color: #333;
+            margin: 0;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .content p {
+            line-height: 1.6;
+        }
+        .order-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .order-details table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .order-details table th, .order-details table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .order-details table th {
+            background-color: #eee;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            color: #777;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NextGadget</h1>
+            <h2>Order Confirmation</h2>
+        </div>
+        <div class="content">
+            <p>Dear {{ order.customer_name }},</p>
+            <p>Thank you for your recent purchase from GadgetHub! Your order has been successfully placed and is now being processed.</p>
+            <p>Here are your order details:</p>
+
+            <div class="order-details">
+                <p><strong>Order Number:</strong> #{{ order.id }}</p>
+                <p><strong>Order Date:</strong> {{ order.created_at|date:"F d, Y H:i" }}</p>
+                <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+                <p><strong>Total Amount:</strong>  ₱{{ order.total_amount|floatformat:2 }}</p>
+                <p><strong>Order Status:</strong> {{ order.get_status_display }}</p>
+                {% if order.transaction_id %}
+                <p><strong>Transaction ID:</strong> {{ order.transaction_id }}</p>
+                {% endif %}
+
+                <h4>Items Ordered:</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>₱{{ item.price_at_purchase|floatformat:2 }}</td>
+                            <td>₱{{ item.subtotal|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <p>We will notify you once your order has been shipped. In the meantime, you can track your order status by logging into your account (if applicable) or by contacting our customer support.</p>
+            <p>If you have any questions, please don't hesitate to contact us.</p>
+            <p>Thank you for choosing NextGadget!</p>
+            <p>Sincerely,<br>The NextGadget Team</p>
+        </div>
+        <div class="footer">
+            <p>&copy; {% now "Y" %} NextGadget. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

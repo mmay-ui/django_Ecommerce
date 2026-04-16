@@ -1,0 +1,117 @@
+<!-- shop/checkout.html -->
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Checkout</h1>
+
+    {% include 'includes/messages.html' %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Customer Information
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'checkout' %}">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="customer_name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="customer_name" name="customer_name" value="{{ customer_name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customer_email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="customer_email" name="customer_email" value="{{ customer_email }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customer_phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="customer_phone" name="customer_phone" value="{{ customer_phone }}" required>
+                        </div>
+
+                        <hr>
+                        <h5>Shipping Address</h5>
+
+                        
+                        <div class="mb-3">
+                            <label for="shipping_address_line1" class="form-label">street</label>
+                            <input type="text" class="form-control" id="shipping_address_line1" name="shipping_address_line1" placeholder="Street, Building, House No." value="{{ shipping_address_line1 }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shipping_address_line2" class="form-label">barangay (Optional)</label>
+                            <input type="text" class="form-control" id="shipping_address_line2" name="shipping_address_line2" placeholder="Landmark, Barangay, etc." value="{{ shipping_address_line2 }}">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="shipping_city" class="form-label">City / Municipality</label>
+                                <input type="text" class="form-control" id="shipping_city" name="shipping_city" value="{{ shipping_city }}" required>
+                            </div>
+                            
+                    
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="shipping_postal_code" class="form-label">Zip / Postal Code</label>
+                                <input type="text" class="form-control" id="shipping_postal_code" name="shipping_postal_code" value="{{ shipping_postal_code }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="shipping_country" class="form-label">Country</label>
+                                <input type="text" class="form-control" id="shipping_country" name="shipping_country" value="{{ shipping_country }}" required>
+                            </div>
+                        </div>
+                        
+
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    Payment Method
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <select class="form-select" name="payment_method" required>
+                            <option value="" disabled {% if not selected_payment_method %}selected{% endif %}>Choose Payment Method</option>
+                            {% for method in payment_methods %}
+                                <option value="{{ method }}" {% if method == selected_payment_method %}selected{% endif %}>{{ method }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Order Summary
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>{{ item.product.name }} x {{ item.quantity }}</span>
+                            <span>₱{{ item.subtotal|floatformat:2 }}</span>
+                        </div>
+                    {% endfor %}
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>Subtotal:</strong>
+                        <strong>₱{{ subtotal|floatformat:2 }}</strong>
+                    </div>
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary btn-lg">Place Order</button>
+                    </div>
+                    <small class="text-muted d-block text-center mt-2">
+                        By clicking 'Place Order', you confirm your purchase. Stock will be reduced upon successful completion.
+                    </small>
+                </div>
+            </div>
+        </div>
+        </form> 
+    </div>
+</div>
+{% endblock %}

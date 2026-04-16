@@ -1,0 +1,444 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Order History{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">My Purchases</h2>
+
+    <!-- STATUS BUTTONS / TABS -->
+    <div class="row text-center mb-5 justify-content-center">
+        <div class="col-md-2 col-sm-4 col-6 mb-3">
+            <a href="#to-pay" class="status-card active" data-target="to-pay">
+                <div class="icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <p>To Pay</p>
+            </a>
+        </div>
+        <div class="col-md-2 col-sm-4 col-6 mb-3">
+            <a href="#to-ship" class="status-card" data-target="to-ship">
+                <div class="icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <p>To Ship</p>
+            </a>
+        </div>
+        <div class="col-md-2 col-sm-4 col-6 mb-3">
+            <a href="#to-receive" class="status-card" data-target="to-receive">
+                <div class="icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <p>To Receive</p>
+            </a>
+        </div>
+        <div class="col-md-2 col-sm-4 col-6 mb-3">
+            <a href="#to-rate" class="status-card" data-target="to-rate">
+                <div class="icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>To Rate</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- VOUCHERS BUTTON / LINK -->
+    <div class="text-center mb-5">
+        <a href="#vouchers-section" class="voucher-card" data-target="vouchers-section">
+             <i class="fas fa-ticket-alt fa-2x"></i>
+             <h5>Vouchers</h5>
+             <small>{{ voucher_count }} Available</small>
+        </a>
+    </div>
+
+
+    <!-- ORDERS LIST -->
+    <div id="to-pay" class="order-section">
+        <h4 class="section-title">To Pay</h4>
+        {% if orders_to_pay %}
+            {% for order in orders_to_pay %}
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">Order #{{ order.id }}</span>
+                    <span class="status pending">Pending Payment</span>
+                </div>
+                <div class="order-body">
+                    <p><strong>Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+                    
+                    <!-- LISTAHAN NG ITEMS -->
+                    <div class="order-items">
+                        {% for item in order.orderitem_set.all %}
+                        <div class="item-row">
+                            <span>{{ item.product.name }}</span>
+                            <span>x{{ item.quantity }}</span>
+                            <span class="price">₱{{ item.product.price }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <p class="total-amount"><strong>Total Amount:</strong> ₱{{ order.total_amount }}</p>
+                    <a href="#" class="btn btn-primary btn-sm view-details-btn" data-order-id="{{ order.id }}">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No orders to pay.</p>
+        {% endif %}
+    </div>
+
+    <div id="to-ship" class="order-section" style="display: none;">
+        <h4 class="section-title">To Ship</h4>
+        {% if orders_to_ship %}
+            {% for order in orders_to_ship %}
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">Order #{{ order.id }}</span>
+                    <span class="status processing">Processing</span>
+                </div>
+                <div class="order-body">
+                    <p><strong>Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+                    
+                    <!-- LISTAHAN NG ITEMS -->
+                    <div class="order-items">
+                        {% for item in order.orderitem_set.all %}
+                        <div class="item-row">
+                            <span>{{ item.product.name }}</span>
+                            <span>x{{ item.quantity }}</span>
+                            <span class="price">₱{{ item.product.price }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <p class="total-amount"><strong>Total Amount:</strong> ₱{{ order.total_amount }}</p>
+                    <a href="#" class="btn btn-primary btn-sm view-details-btn" data-order-id="{{ order.id }}">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No orders to ship.</p>
+        {% endif %}
+    </div>
+
+     <div id="to-receive" class="order-section" style="display: none;">
+        <h4 class="section-title">To Receive</h4>
+        {% if orders_to_receive %}
+            {% for order in orders_to_receive %}
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">Order #{{ order.id }}</span>
+                    <span class="status shipped">Shipped</span>
+                </div>
+                <div class="order-body">
+                    <p><strong>Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+                    
+                    <!-- LISTAHAN NG ITEMS -->
+                    <div class="order-items">
+                        {% for item in order.orderitem_set.all %}
+                        <div class="item-row">
+                            <span>{{ item.product.name }}</span>
+                            <span>x{{ item.quantity }}</span>
+                            <span class="price">₱{{ item.product.price }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <p class="total-amount"><strong>Total Amount:</strong> ₱{{ order.total_amount }}</p>
+                    <a href="#" class="btn btn-primary btn-sm view-details-btn" data-order-id="{{ order.id }}">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No orders to receive.</p>
+        {% endif %}
+    </div>
+
+    <div id="to-rate" class="order-section" style="display: none;">
+        <h4 class="section-title">To Rate</h4>
+        {% if orders_to_rate %}
+            {% for order in orders_to_rate %}
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">Order #{{ order.id }}</span>
+                    <span class="status delivered">Delivered</span>
+                </div>
+                <div class="order-body">
+                    <p><strong>Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+                    
+                    <!-- LISTAHAN NG ITEMS -->
+                    <div class="order-items">
+                        {% for item in order.orderitem_set.all %}
+                        <div class="item-row">
+                            <span>{{ item.product.name }}</span>
+                            <span>x{{ item.quantity }}</span>
+                            <span class="price">₱{{ item.product.price }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <p class="total-amount"><strong>Total Amount:</strong> ₱{{ order.total_amount }}</p>
+                    <a href="#" class="btn btn-primary btn-sm">Rate Product</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No products to rate.</p>
+        {% endif %}
+    </div>
+
+    <!-- VOUCHERS LIST SECTION -->
+    <div id="vouchers-section" class="order-section" style="display: none;">
+        <h4 class="section-title">Available Vouchers</h4>
+        {% if available_vouchers %}
+            <div class="row">
+                {% for voucher in available_vouchers %}
+                <div class="col-md-4 mb-4">
+                    <div class="voucher-item-card">
+                        <h5 class="text-primary">{{ voucher.code }}</h5>
+                        <p class="discount-text">
+                            {% if voucher.discount_type == 'percentage' %}
+                                {{ voucher.discount_value }}% OFF
+                            {% else %}
+                                ₱{{ voucher.discount_value }} OFF
+                            {% endif %}
+                        </p>
+                        <p class="small text-muted">Min. Spend: ₱{{ voucher.minimum_purchase }}</p>
+                        <p class="small text-muted">Valid until: {{ voucher.valid_until|date:"F d, Y" }}</p>
+                        <button class="btn btn-outline-primary btn-sm copy-voucher-btn" data-code="{{ voucher.code }}">Copy Code</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">No vouchers available at the moment.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- MODAL PARA SA VIEW DETAILS -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel">Order Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modalContent">
+        <!-- Dito lalabas ang details -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- CSS PARA SA DESIGN AT SPACING -->
+<style>
+/* Status Cards */
+.status-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px 10px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.status-card:hover, .status-card.active {
+   border-color: #007bff;
+    color: #007bff; 
+}
+
+.status-card .icon {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.status-card p {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Voucher Card */
+.voucher-card {
+    display: inline-block;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px 50px;
+    background-color: #fff;
+    color: #6c757d;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.voucher-card:hover, .voucher-card.active {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.voucher-card i {
+    margin-bottom: 10px;
+    display: block;
+}
+
+.voucher-card h5 {
+    margin: 0;
+    font-size: 16px;
+}
+
+/* Order Items Display */
+.order-items {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.item-row:last-child {
+    border-bottom: none;
+}
+
+.item-row .price {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.total-amount {
+    font-size: 16px;
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Order Sections */
+.section-title {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.order-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f5f5f5;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.status {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status.pending { background: #fff3cd; color: #856404; }
+.status.processing { background: #cce5ff; color: #004085; }
+.status.shipped { background: #d4edda; color: #155724; }
+.status.delivered { background: #d1ecf1; color: #0c5460; }
+
+/* Voucher Item Card */
+.voucher-item-card {
+    border: 1px dashed #007bff;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.discount-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #dc3545;
+}
+</style>
+
+<!-- JAVASCRIPT -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // TABS FUNCTIONALITY
+    const cards = document.querySelectorAll('.status-card, .voucher-card');
+    const sections = document.querySelectorAll('.order-section');
+
+    cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            cards.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            const targetId = this.getAttribute('data-target');
+            sections.forEach(sec => sec.style.display = 'none');
+            document.getElementById(targetId).style.display = 'block';
+        });
+    });
+
+    // VIEW DETAILS MODAL
+    const detailButtons = document.querySelectorAll('.view-details-btn');
+    const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+    const modalContent = document.getElementById('modalContent');
+
+    detailButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const orderId = this.getAttribute('data-order-id');
+            
+            // Dito pwede mong lagyan ng AJAX call para kunin ang data from backend
+            // Pero for now, example lang ng content
+            let content = `
+                <h4>Order #${orderId}</h4>
+                <p><strong>Status:</strong> Processing...</p>
+                <hr>
+                <h5>Shipping Address:</h5>
+                <p>Sample Address here...</p>
+                <hr>
+                <h5>Payment Method:</h5>
+                <p>Cash on Delivery / Online Payment</p>
+            `;
+            
+            modalContent.innerHTML = content;
+            modal.show();
+        });
+    });
+
+    // COPY VOUCHER CODE
+    const copyButtons = document.querySelectorAll('.copy-voucher-btn');
+    copyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const code = this.getAttribute('data-code');
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = this.innerText;
+                this.innerText = 'Copied!';
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-success');
+                setTimeout(() => {
+                    this.innerText = originalText;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-primary');
+                }, 2000);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
